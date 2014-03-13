@@ -1,3 +1,5 @@
+	#This resource is designed to interact with MySQL trough the puppetlabs-mysql module
+
 	include '::mysql::server'
 
 	#Creates bugzilla user on localhost and manages it within MySQL.

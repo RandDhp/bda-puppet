@@ -7,17 +7,17 @@
 		$perl 		= 'perl',
 		$pmtools 	= 'pmtools',
 		$cpanminus 	= 'cpanminus',
-		#$module		= ['CGI', 'Date::Format', 'DateTime'],
-						#'DateTime::TimeZone',
-						#'DBI',
+		#$module		= ['CGI',- 'Date::Format', 'DateTime'-],
+						#'DateTime::TimeZone',-
+						#'DBI',-
 						#'DBD::mysql',
-						#'Digest::SHA',
-						#'Email::Send',
-						#'Email::MIME',
-						#'Template',
-						#'URI',
-						#'List::MoreUtils',
-						#'Math::Random::ISAAC'
+						#'Digest::SHA',-
+						#'Email::Send',-
+						#'Email::MIME',-
+						#'Template',-
+						#'URI',-
+						#'List::MoreUtils',-
+						#'Math::Random::ISAAC'-
 						#],		
 		$path 		= '/usr/bin:/usr/sbin:/bin'
 		#Vagrant users $path 	= '/bin:/usr/bin'
@@ -32,12 +32,12 @@
 		package { $cpanminus:
 			ensure 	=> $ensure,
 		}
-		exec { 'perl-modules':
-			command 	=> "cpanm {$module[0]}",
-  			path 		=> $path,
-  			user 		=> root,
- 			#onlyif  	=> "test `puppet module list | grep {$module[0]} | wc -l` -eq 0"
-		}	
+		#exec { 'perl-modules':
+		#	command 	=> "cpanm ${module[0]}",
+  		#	path 		=> $path,
+  		#	user 		=> root,
+ 		#	#onlyif  	=> "test `puppet module list | grep ${module[0]} | wc -l` -eq 0"
+		#}	
 		#Installation of perl modules	
 		exec { 'CGI':
 			command 	=> "cpanm CGI",
@@ -69,6 +69,7 @@
   			user 		=> root,
  			onlyif  	=> "test `puppet module list | grep DBI | wc -l` -eq 0"
 		}
+		#MySQL has to be already installed
 		exec { 'DBD-mysql':
 			command 	=> "cpanm DBD::mysql",
   			path 		=> $path,

@@ -1,4 +1,5 @@
-    
+	#This resource is designed to interact with Apache trough the puppetlabs-apache module
+
 	#Sets up a virtual host with SSL and specific SSL certificates
     apache::vhost { '15.185.237.107':
       port     => '443',

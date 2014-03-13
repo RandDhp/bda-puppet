@@ -1,4 +1,4 @@
-	#This class is designed to install Apache Web-Server and configure it through the puppetlabs-apache module.
+	#This class is designed to install Apache Web-Server through the puppetlabs-apache module
 
 	#Definition of the class
 	class apache(

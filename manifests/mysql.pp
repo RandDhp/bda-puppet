@@ -1,4 +1,4 @@
-	#This class is designed to install MySQL and configure it through the puppetlabs-mysql module.
+	#This class is designed to install MySQL through the puppetlabs-mysql module
 
 	#Definition of the class
 	class mysql(
