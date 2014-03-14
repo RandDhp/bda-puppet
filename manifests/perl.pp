@@ -24,15 +24,18 @@
 	){
 		#Installation of perl, pmtools and cpanminus
 		package { $perl:
-			ensure 	=> $ensure,
+			ensure 		=> $ensure,
+			before 		=> Package["${pmtools}"]
 		}
 		package { $pmtools:
-			ensure 	=> $ensure,
+			ensure 		=> $ensure,
+			before 		=> Package["${cpanminus}"]
 		}
 		package { $cpanminus:
-			ensure 	=> $ensure,
+			ensure 		=> $ensure,
+			before 		=> Exec['CGI']
 		}
-		#exec { 'perl-modules':
+		#exec { 'perl_modules':
 		#	command 	=> "cpanm ${module[0]}",
   		#	path 		=> $path,
   		#	user 		=> root,
@@ -43,76 +46,88 @@
 			command 	=> "cpanm CGI",
   			path 		=> $path,
   			user 		=> root,
- 			onlyif  	=> "test `puppet module list | grep CGI | wc -l` -eq 0"
+ 			onlyif  	=> "test `puppet module list | grep CGI | wc -l` -eq 0",
+ 			before 		=> Exec['Date_Format']
 		}		
-		exec { 'Date-Format':
+		exec { 'Date_Format':
 			command 	=> "cpanm Date::Format'",
   			path 		=> $path,
   			user 		=> root,
- 			onlyif  	=> "test `puppet module list | grep Date::Format' | wc -l` -eq 0"
+ 			onlyif  	=> "test `puppet module list | grep Date::Format' | wc -l` -eq 0",
+ 			before 		=> Exec['DateTime']
 		}	
 		exec { 'DateTime':
 			command 	=> "cpanm DateTime",
   			path 		=> $path,
   			user 		=> root,
- 			onlyif  	=> "test `puppet module list | grep DateTime | wc -l` -eq 0"
+ 			onlyif  	=> "test `puppet module list | grep DateTime | wc -l` -eq 0",
+ 			before 		=> Exec['DateTime_TimeZone']			
 		}			
-		exec { 'DateTime-TimeZone':
+		exec { 'DateTime_TimeZone':
 			command 	=> "cpanm DateTime::TimeZone",
   			path 		=> $path,
   			user 		=> root,
- 			onlyif  	=> "test `puppet module list | grep DateTime::TimeZone | wc -l` -eq 0"
+ 			onlyif  	=> "test `puppet module list | grep DateTime::TimeZone | wc -l` -eq 0",
+ 			before 		=> Exec['DBI']
 		}	
 		exec { 'DBI':
 			command 	=> "cpanm DBI",
   			path 		=> $path,
   			user 		=> root,
- 			onlyif  	=> "test `puppet module list | grep DBI | wc -l` -eq 0"
+ 			onlyif  	=> "test `puppet module list | grep DBI | wc -l` -eq 0",
+ 			before 		=> Exec['DBD_mysql']
 		}
 		#MySQL has to be already installed
-		exec { 'DBD-mysql':
+		exec { 'DBD_mysql':
 			command 	=> "cpanm DBD::mysql",
   			path 		=> $path,
   			user 		=> root,
- 			onlyif  	=> "test `puppet module list | grep DBD::mysql | wc -l` -eq 0"
+ 			onlyif  	=> "test `puppet module list | grep DBD::mysql | wc -l` -eq 0",
+ 			before 		=> Exec['Digest_SHA']
 		}		
-		exec { 'Digest-SHA':
+		exec { 'Digest_SHA':
 			command 	=> "cpanm Digest::SHA",
   			path 		=> $path,
   			user 		=> root,
- 			onlyif  	=> "test `puppet module list | grep Digest::SHA | wc -l` -eq 0"
+ 			onlyif  	=> "test `puppet module list | grep Digest::SHA | wc -l` -eq 0",
+ 			before 		=> Exec['Email_Send'],
 		}
-		exec { 'Email-Send':
+		exec { 'Email_Send':
 			command 	=> "cpanm Email::Send",
   			path 		=> $path,
   			user 		=> root,
  			onlyif  	=> "test `puppet module list | grep Email::Send | wc -l` -eq 0"
+ 			before 		=> Exec['Email_MIME']
 		}		
-		exec { 'Email-MIME':
+		exec { 'Email_MIME':
 			command 	=> "cpanm Email::MIME",
   			path 		=> $path,
   			user 		=> root,
- 			onlyif  	=> "test `puppet module list | grep Email::MIME | wc -l` -eq 0"
+ 			onlyif  	=> "test `puppet module list | grep Email::MIME | wc -l` -eq 0",
+ 			before 		=> Exec['Template']
 		}	
 		exec { 'Template':
 			command 	=> "cpanm Template",
   			path 		=> $path,
   			user 		=> root,
- 			onlyif  	=> "test `puppet module list | grep Template | wc -l` -eq 0"
+ 			onlyif  	=> "test `puppet module list | grep Template | wc -l` -eq 0",
+ 			before 		=> Exec['URI']
 		}	
 		exec { 'URI':
 			command 	=> "cpanm URI",
   			path 		=> $path,
   			user 		=> root,
- 			onlyif  	=> "test `puppet module list | grep URI | wc -l` -eq 0"
+ 			onlyif  	=> "test `puppet module list | grep URI | wc -l` -eq 0",
+ 			before 		=> Exec['List_MoreUtils']
 		}		
-		exec { 'List-MoreUtils':
+		exec { 'List_MoreUtils':
 			command 	=> "cpanm List::MoreUtils",
   			path 		=> $path,
   			user 		=> root,
- 			onlyif  	=> "test `puppet module list | grep List::MoreUtils | wc -l` -eq 0"
+ 			onlyif  	=> "test `puppet module list | grep List::MoreUtils | wc -l` -eq 0",
+ 			before 		=> Exec['Math_Random_ISAAC']
 		}
-		exec { 'Math-Random-ISAAC':
+		exec { 'Math_Random_ISAAC':
 			command 	=> "cpanm Math::Random::ISAAC",
   			path 		=> $path,
   			user 		=> root,

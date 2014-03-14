@@ -2,9 +2,9 @@
 
 	#Definition of the class
 	class bda-puppet {		
-		#include db - good with config - config after what?
-		#include web_server - good without config - config after installing bugzilla?
-		#include perl - good - fix order - modules too slow
+		include mysql
+		include apache
+		include perl
 		#include bugzilla
 		#include ssl
 	}

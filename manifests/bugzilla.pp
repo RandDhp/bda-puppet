@@ -3,8 +3,8 @@
 	#Definition of the class
 	class bugzilla(
 		$admin_email		= 'diego.denova@hp.com',
-		$admin_password	= '123456789',	
-		$admin_realname	= 'Diego De Nova',
+		$admin_password		= '123456789',	
+		$admin_realname		= 'Diego De Nova',
 		$create_htaccess 	= false,
 		$webservergroup 	= 'apache',
 		$use_suexec			= false,
@@ -25,25 +25,25 @@
 		$tarball			= "wget -O /tmp/bugzilla-4.4.2.tar.gz http://ftp.mozilla.org/pub/mozilla.org/webtools/bugzilla-4.4.2.tar.gz",
 		$untar 				= "tar -C /usr/local -zxvf /tmp/bugzilla-4.4.2.tar.gz",
 		$path 				= '/usr/bin:/usr/sbin:/bin',
-		$bugzilla_dir 		= '/usr/local/bugzilla-4.4.2/',	
+		$bugzilla_dir 		= '/usr/local/bugzilla-4.4.2/',
+		#$answer_config_file = '/usr/local/bugzilla-4.4.2/localconfig'
 		$answer_config_file = "${bugzilla_dir}localconfig"
 	){
 		#Download Bugzilla's tarball and untar it
-		exec { 'bugzilla-tar':
+		exec { 'bugzilla_tar':
 			command 	=> $tarball,
   			path 		=> $path,
   			user 		=> root,  			
- 			onlyif  	=> "test `ls /tmp | grep bugzilla-4.4.2.tar.gz | wc -l` -eq 0"
- 			notify 		=> Exec['bugzilla_untar']
+ 			onlyif  	=> "test `ls /tmp | grep bugzilla-4.4.2.tar.gz | wc -l` -eq 0",
+ 			before 		=> Exec['bugzilla_untar']
 		}	
-		exec { 'bugzilla-untar':
+		exec { 'bugzilla_untar':
 			command 	=> $untar,
   			path 		=> $path,
   			user 		=> root,  			
- 			onlyif  	=> "test `ls /usr/local | grep bugzilla-4.4.2/ | wc -l` -eq 0"
+ 			onlyif  	=> "test `ls /usr/local | grep bugzilla-4.4.2/ | wc -l` -eq 0",
+ 			before 		=> File["${answer_config_file}"]
 		}	
-
-		#$answer_config_file = "${bugzilla_dir}localconfig"
 
 		#Perform configuration and run checksetup.pl which will build the database if required.
 		file { $answer_config_file:
