@@ -2,9 +2,9 @@
 
 	#Definition of the class
 	class bugzilla(
-		#$admin_email		= 'diego.denova@hp.com',
-		#$admin_password	= '123456789',	
-		#$admin_realname	= 'Diego De Nova',
+		$admin_email		= 'diego.denova@hp.com',
+		$admin_password	= '123456789',	
+		$admin_realname	= 'Diego De Nova',
 		$create_htaccess 	= false,
 		$webservergroup 	= 'apache',
 		$use_suexec			= false,
