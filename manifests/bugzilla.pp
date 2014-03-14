@@ -21,11 +21,10 @@
 	  	$diffpath 			= '/usr/bin',
 	  	$site_wide_secret 	= '',
 		$smtp_server 		= 'localhost',
-		$tarball			= 'wget -O /tmp http://ftp.mozilla.org/pub/mozilla.org/webtools/bugzilla-4.4.2.tar.gz',
+		$tarball			= "wget -O /tmp/bugzilla-4.4.2.tar.gz http://ftp.mozilla.org/pub/mozilla.org/webtools/bugzilla-4.4.2.tar.gz",
 		$untar 				= "tar -C /usr/local -zxvf /tmp/bugzilla-4.4.2.tar.gz",
 		$path 				= '/usr/bin:/usr/sbin:/bin',
-		$bugzilla_dir 		= '/usr/local/bugzilla-4.4.2/',
-		$answer_config_file = "${bugzilla_dir}localconfig"		
+		$bugzilla_dir 		= '/usr/local/bugzilla-4.4.2/',	
 	){
 		#Download Bugzilla's tarball and untar it
 		exec { 'bugzilla-tar':
@@ -40,6 +39,8 @@
   			user 		=> root,  			
  			onlyif  	=> "test `ls /usr/local | grep bugzilla-4.4.2/ | wc -l` -eq 0"
 		}	
+
+		$answer_config_file = "${bugzilla_dir}localconfig"	
 
 		#Perform configuration and run checksetup.pl which will build the database if required.
 		file { $answer_config_file:
