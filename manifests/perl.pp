@@ -1,4 +1,4 @@
-	#This class is designed to install perl, pmtools, cpanminus and some perl modules. All of this in their last versions.
+	#This class is designed to install perl, pmtools, cpanminus and some perl modules. All of this in their last versions
 
 	#Definition of the class
 	class perl(

@@ -9,6 +9,7 @@
 		exec { 'puppetlabs-mysql':
 			command 	=> $mysql,
   			path 		=> $path,
+  			user 		=> root,  			
  			onlyif  	=> "test `puppet module list | grep puppetlabs-mysql | wc -l` -eq 0"
 		}
 	}

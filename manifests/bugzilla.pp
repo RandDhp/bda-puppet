@@ -1,50 +1,58 @@
+	#This class is designed to install and set up Bugzilla
 
+	#Definition of the class
 	class bugzilla(
-		#Creates a directory for puppet to work with configuration
-		file {"/etc/bugzilla/.puppet":
-			ensure => directory,
-			mode => 0755,
-			owner => "root",
-			group => "root"
-		}
-	)
-
-	define bugzilla::project (
 		$admin_email,
 		$admin_password,
 		$admin_realname,
-		$create_htaccess = false,
-		$webservergroup = 'apache',
-	  	$db_driver = 'mysql',
-	  	$db_host = 'localhost',
-	 	$db_name = 'bugzilla',
-	  	$db_user = 'bugzilla',
-	  	$db_pass = '',
-	  	$db_port = 0,
-	  	$db_sock = '',
-	  	$db_check = true,
-	  	$index_html = false,
-	  	$cvsbin = '/usr/bin/cvs',
-	  	$interdiffbin = '/usr/bin/interdiff',
-	  	$diffpath = '/usr/bin',
-	  	$site_wide_secret = '',
-		$smtp_server = 'localhost'
+		$create_htaccess 	= false,
+		$webservergroup 	= 'apache',
+	  	$db_driver 			= 'mysql',
+	  	$db_host 			= 'localhost',
+	 	$db_name 			= 'bugzilla',
+	  	$db_user 			= 'bugzilla',
+	  	$db_pass 			= '',
+	  	$db_port 			= 0,
+	  	$db_sock 			= '',
+	  	$db_check 			= true,
+	  	$index_html 		= false,
+	  	$cvsbin 			= '/usr/bin/cvs',
+	  	$interdiffbin 		= '/usr/bin/interdiff',
+	  	$diffpath 			= '/usr/bin',
+	  	$site_wide_secret 	= '',
+		$smtp_server 		= 'localhost',
+		$tarball			= 'wget -O /tmp http://ftp.mozilla.org/pub/mozilla.org/webtools/bugzilla-4.4.2.tar.gz',
+		$untar 				= "tar -C /usr/local -zxvf /tmp/bugzilla-4.4.2.tar.gz",
+		$path 				= '/usr/bin:/usr/sbin:/bin',
+		$bugzilla_dir 		= '/usr/local/bugzilla-4.4.2/',
+		$answer_config_file = "${bugzilla_dir}localconfig"		
 	){
+		#Download Bugzilla's tarball and untar it
+		exec { 'bugzilla-tar':
+			command 	=> $tarball,
+  			path 		=> $path,
+  			user 		=> root,  			
+ 			onlyif  	=> "test `ls /tmp | grep bugzilla-4.4.2.tar.gz | wc -l` -eq 0"
+		}	
+		exec { 'bugzilla-untar':
+			command 	=> $untar,
+  			path 		=> $path,
+  			user 		=> root,  			
+ 			onlyif  	=> "test `ls /usr/local | grep bugzilla-4.4.2/ | wc -l` -eq 0"
+		}	
 
-		require("bugzilla")
-
-		$bz_confdir = "/etc/bugzilla/"
-		case $name {
-			"main": {
-				$localconfigfile = "${bz_confdir}localconfig"
-				$backupconfigfile = "${bz_confdir}.puppet/localconfig"
-				$answerconfigfile = "${bz_confdir}.puppet/answer"
-				$envexport = "DUMMY=foo"
-			}
-			/(.*)/: {
-				$localconfigfile = "${bz_confdir}localconfig.${name}"
-				$backupconfigfile = "${bz_confdir}.puppet/localconfig.${name}"
-				$answerconfigfile = "${bz_confdir}.puppet/answer.${name}"
-				$envexport = "PROJECT=${name}"
-			}
+		#Perform configuration and run checksetup.pl which will build the database if required.
+		file { $answer_config_file:
+			owner 		=> root,
+			group 		=> root,
+			mode 		=> '0644',
+			content 	=> template('bda-puppet/templates/answer.erb'),
+			notify 		=> Exec['bugzilla_checksetup']
 		}
+		exec { 'bugzilla_checksetup':
+			command 	=> "${bugzilla_dir}checksetup.pl ${answer_config_file}",
+			logoutput 	=> true,
+			refreshonly => true,
+			#notify 	=> Exec["backup_localconfigfile_${name}"]
+		}		
+	}
