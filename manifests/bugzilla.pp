@@ -26,6 +26,7 @@
 		$untar 				= "tar -C /usr/local -zxvf /tmp/bugzilla-4.4.2.tar.gz",
 		$path 				= '/usr/bin:/usr/sbin:/bin',
 		$bugzilla_dir 		= '/usr/local/bugzilla-4.4.2/',	
+		$answer_config_file = "${bugzilla_dir}localconfig"
 	){
 		#Download Bugzilla's tarball and untar it
 		exec { 'bugzilla-tar':
@@ -33,6 +34,7 @@
   			path 		=> $path,
   			user 		=> root,  			
  			onlyif  	=> "test `ls /tmp | grep bugzilla-4.4.2.tar.gz | wc -l` -eq 0"
+ 			notify 		=> Exec['bugzilla_untar']
 		}	
 		exec { 'bugzilla-untar':
 			command 	=> $untar,
@@ -41,21 +43,20 @@
  			onlyif  	=> "test `ls /usr/local | grep bugzilla-4.4.2/ | wc -l` -eq 0"
 		}	
 
-		$answer_config_file = "${bugzilla_dir}localconfig"	
+		#$answer_config_file = "${bugzilla_dir}localconfig"
 
 		#Perform configuration and run checksetup.pl which will build the database if required.
 		file { $answer_config_file:
 			owner 		=> root,
 			group 		=> root,
 			mode 		=> '0644',
-			content 	=> template('~/bda-puppet/templates/answer.erb'),
+			content 	=> template('bda-puppet/answer.erb'),
 			notify 		=> Exec['bugzilla_checksetup']
 		}
 		exec { 'bugzilla_checksetup':
 			command 	=> "${bugzilla_dir}checksetup.pl ${answer_config_file}",
 			logoutput 	=> true,
-			refreshonly => true,
-			#notify 	=> Exec["backup_localconfigfile_${name}"]
+			refreshonly => true,			
 		}		
 	}
 
