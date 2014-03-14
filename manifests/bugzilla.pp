@@ -2,11 +2,12 @@
 
 	#Definition of the class
 	class bugzilla(
-		$admin_email,
-		$admin_password,
-		$admin_realname,
+		#$admin_email		= 'diego.denova@hp.com',
+		#$admin_password	= '123456789',	
+		#$admin_realname	= 'Diego De Nova',
 		$create_htaccess 	= false,
 		$webservergroup 	= 'apache',
+		$use_suexec			= false,
 	  	$db_driver 			= 'mysql',
 	  	$db_host 			= 'localhost',
 	 	$db_name 			= 'bugzilla',
@@ -47,7 +48,7 @@
 			owner 		=> root,
 			group 		=> root,
 			mode 		=> '0644',
-			content 	=> template('bda-puppet/templates/answer.erb'),
+			content 	=> template('~/bda-puppet/templates/answer.erb'),
 			notify 		=> Exec['bugzilla_checksetup']
 		}
 		exec { 'bugzilla_checksetup':
@@ -57,3 +58,6 @@
 			#notify 	=> Exec["backup_localconfigfile_${name}"]
 		}		
 	}
+
+	#Declaration of the class
+	include bugzilla
