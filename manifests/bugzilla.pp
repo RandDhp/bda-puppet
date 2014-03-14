@@ -61,4 +61,4 @@
 	}
 
 	#Declaration of the class
-	include bugzilla
+	#include bugzilla
