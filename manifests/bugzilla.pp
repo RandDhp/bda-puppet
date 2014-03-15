@@ -21,12 +21,14 @@
 	  	$interdiffbin 		= '/usr/bin/interdiff',
 	  	$diffpath 			= '/usr/bin',
 	  	$site_wide_secret 	= '',
-		$smtp_server 		= 'localhost',
-		$tarball			= "wget -O /tmp/bugzilla-4.4.2.tar.gz http://ftp.mozilla.org/pub/mozilla.org/webtools/bugzilla-4.4.2.tar.gz",
-		$untar 				= "tar -C /usr/local -zxvf /tmp/bugzilla-4.4.2.tar.gz",
+		$smtp_server 		= 'localhost',	
+		$tarball			= "wget -O /tmp/bugzilla.tar.gz http://ftp.mozilla.org/pub/mozilla.org/webtools/bugzilla-4.4.2.tar.gz",
+		$untar 				= "tar -C /var/www/html -zxvf /tmp/bugzilla.tar.gz",
+		$name_change 		= "mv /var/www/html/bugzilla-4.4.2/ bugzilla",
+		$httpd_change		= "echo $'PerlSwitches -I/var/www/html/bugzilla -I/var/www/html/bugzilla/lib -w -T\nPerlConfigRequire /var/www/html/bugzilla/mod_perl.pl'"
 		$path 				= '/usr/bin:/usr/sbin:/bin',
-		$bugzilla_dir 		= '/usr/local/bugzilla-4.4.2/',
-		#$answer_config_file = '/usr/local/bugzilla-4.4.2/localconfig'
+		$bugzilla_dir 		= '/var/www/html/bugzilla/',
+		#$answer_config_file = '/var/www/html/bugzilla/localconfig'
 		$answer_config_file = "${bugzilla_dir}localconfig"
 	){
 		#Download Bugzilla's tarball and untar it
@@ -42,8 +44,20 @@
   			path 		=> $path,
   			user 		=> root,  			
  			onlyif  	=> "test `ls /usr/local | grep bugzilla-4.4.2/ | wc -l` -eq 0",
- 			before 		=> File["${answer_config_file}"]
+ 			before 		=> Exec['bugzilla_name_change']
 		}	
+		exec { 'bugzilla_name_change':
+			command 	=> $name_change,
+  			path 		=> $path,
+  			user 		=> root,  			
+ 			before 		=> Exec['httpd_conf_file_change']			
+		}	
+		exec { 'httpd_conf_file_change':
+			command 	=> $httpd_change,
+  			path 		=> $path,
+  			user 		=> root,  			
+ 			before 		=> File["${answer_config_file}"]			
+		}		
 
 		#Perform configuration and run checksetup.pl which will build the database if required.
 		file { $answer_config_file:
