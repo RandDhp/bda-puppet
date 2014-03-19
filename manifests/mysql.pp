@@ -10,7 +10,7 @@
 			command 	=> $mysql,
   			path 		=> $path,
   			user 		=> root,  			
- 			onlyif  	=> "test `puppet module list | grep puppetlabs-mysql | wc -l` -eq 0",
+ 			onlyif  	=> "test `puppet module list | grep puppetlabs-mysql | wc -l` -eq 0"
 		}
 	}
 
@@ -20,15 +20,16 @@
 
 	#Creates bugzilla user on localhost and manages it within MySQL.
 	#mysql_user { 'bugzilla@localhost':
-	#	ensure                   	=> 'present',
-	#	max_connections_per_hour 	=> '0',
-	#	max_queries_per_hour     	=> '0',
-	#	max_updates_per_hour     	=> '0',
-	#	max_user_connections     	=> '0',
+		#ensure                   	=> 'present',
+		#require					=> 	Exec['puppetlabs-mysql'],
+		#max_connections_per_hour 	=> '0',
+		#max_queries_per_hour     	=> '0',
+		#max_updates_per_hour     	=> '0',
+		#max_user_connections     	=> '0',
 	#}
 
 	#Declaration of the class
-	#include mysql
+	include mysql
 
 
 

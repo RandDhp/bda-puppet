@@ -25,7 +25,7 @@
 		$tarball			= "wget -O /tmp/bugzilla.tar.gz http://ftp.mozilla.org/pub/mozilla.org/webtools/bugzilla-4.4.2.tar.gz",
 		$untar 				= "tar -C /var/www/html -zxvf /tmp/bugzilla.tar.gz",
 		$name_change 		= "mv /var/www/html/bugzilla-4.4.2/ bugzilla",
-		$httpd_change		= "echo $'PerlSwitches -I/var/www/html/bugzilla -I/var/www/html/bugzilla/lib -w -T\nPerlConfigRequire /var/www/html/bugzilla/mod_perl.pl'"
+		$httpd_change		= "echo $'PerlSwitches -I/var/www/html/bugzilla -I/var/www/html/bugzilla/lib -w -T\nPerlConfigRequire /var/www/html/bugzilla/mod_perl.pl'",
 		$path 				= '/usr/bin:/usr/sbin:/bin',
 		$bugzilla_dir 		= '/var/www/html/bugzilla/',
 		#$answer_config_file = '/var/www/html/bugzilla/localconfig'
@@ -38,7 +38,7 @@
   			user 		=> root,  			
  			onlyif  	=> "test `ls /tmp | grep bugzilla-4.4.2.tar.gz | wc -l` -eq 0",
  			before 		=> Exec['bugzilla_untar']
-		}	
+		}
 		exec { 'bugzilla_untar':
 			command 	=> $untar,
   			path 		=> $path,
@@ -50,13 +50,13 @@
 			command 	=> $name_change,
   			path 		=> $path,
   			user 		=> root,  			
- 			before 		=> Exec['httpd_conf_file_change']			
+ 			before 		=> Exec['httpd_conf_file_change']		
 		}	
 		exec { 'httpd_conf_file_change':
 			command 	=> $httpd_change,
   			path 		=> $path,
   			user 		=> root,  			
- 			before 		=> File["${answer_config_file}"]			
+ 			before 		=> File["${answer_config_file}"]		
 		}		
 
 		#Perform configuration and run checksetup.pl which will build the database if required.
@@ -70,9 +70,9 @@
 		exec { 'bugzilla_checksetup':
 			command 	=> "${bugzilla_dir}checksetup.pl ${answer_config_file}",
 			logoutput 	=> true,
-			refreshonly => true,			
+			refreshonly => true,		
 		}		
 	}
 
 	#Declaration of the class
-	#include bugzilla
+	include bugzilla
